@@ -12,7 +12,7 @@ public class Portugolo {
 
 		lexer.printTS();
 
-		System.out.println("Compilação realizada do portugolo");
+		System.out.println("			Compilação realizada do Portugolo			");
 	}
 
 }

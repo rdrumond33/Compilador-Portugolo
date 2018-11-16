@@ -10,7 +10,7 @@ public class Lexema {
 	public static int n_column = 1; // contador de colunas
 	private RandomAccessFile instance_file; // referencia para o arquivo
 	private static Ts tabelaSimbolos; // tabela de simbolos
-	static int err = 0;
+	static int err = 0,ContadorError = 0;
 
 	/**
 	 * Função Lexema abre o arquivo
@@ -46,13 +46,14 @@ public class Lexema {
 	}
 
 	/**
-	 * sinalizaErro(char c, int n_line, int n_colum) Recebe o caracter que esta
+	 * sinalizaError(char c, int n_line, int n_colum) Recebe o caracter que esta
 	 * errado na variavel c com a linha e coluna e retorna uma menssagem
 	 * 
 	 */
-	public void sinalizaErro(char c,String esperado, int n_line, int n_colum) {
-		++err;
-		System.out.println("[Erro lexico]: Simbolo encontrado: " + c + " na linha: " + n_line + " e na coluna: " + n_column + " simbulo esperado e: " + esperado + "\n");
+	public void sinalizaError(char c, String esperado, int n_line, int n_colum) {
+		this.ContadorError+=++err;
+		System.err.println("[Erro lexico "+this.ContadorError+"]: Simbolo encontrado: " + c + " na linha: " + n_line + " e na coluna: "
+				+ n_column + " Simbolo esperado : " + esperado + "\n");
 		verificarQuebraDeLinha(c);
 
 	}
@@ -78,20 +79,21 @@ public class Lexema {
 	 * verificarQuebraDeLinha(char c) se c e \n e retorna a coluna=1 e acresenta
 	 * mais 1 a linha
 	 */
-	public void verificarQuebraDeLinha(char c) {
+	public boolean verificarQuebraDeLinha(char c) {
 
 		if (c == '\n' || c == '\r') {
 			n_column = 1;
 			n_line++;
-
+			return true;
 		}
+		return false;
 	}
 
 	public void printTS() {
 		System.out.println("");
-		System.out.println("--------Tabela de Simbolos--------");
+		System.out.println("---------------- Tabela de Simbolos: Portugolo ---------------------");
 		System.out.println(tabelaSimbolos.toString());
-		System.out.println();
+		System.out.print(" ----------------------------------------------------------------------\n");
 	}
 
 	/**
@@ -123,7 +125,7 @@ public class Lexema {
 					n_column++;
 				}
 			} catch (IOException e) {
-				System.out.println("Erro na leitura do arquivo");
+				System.out.println(" Error na leitura do arquivo ");
 				System.exit(3);
 			}
 
@@ -136,9 +138,11 @@ public class Lexema {
 					return new Token(Tag.EOF, "EOF", n_line, n_column);
 				} else if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
 					// Permance no estado = 0
-					verificarQuebraDeLinha(c);
+					if(verificarQuebraDeLinha(c)) {
+						
+					}
 					// Reconhece o Tabulacao com 3 de espaco
-					if (c == '\t')
+					else if (c == '\t')
 						n_column += 3;
 				} else if (c == '+') {// Estado Q1
 					return new Token(Tag.RELOP_PLUS, "+", n_line, n_column);
@@ -174,7 +178,7 @@ public class Lexema {
 				} else {
 					if (err == 0) {
 
-						sinalizaErro(c,"", n_line, n_column);
+						sinalizaError(c, " caracter nao pertece a linguagem ", n_line, n_column);
 					}
 
 				}
@@ -207,15 +211,12 @@ public class Lexema {
 				if (c == '*') {
 					estado = 7;
 
-				} else if (c == '\n') {
-					n_line++;
-					n_column = 1;
-				} 
-				else if (c != '*') {}
-				else {
+				} else if (verificarQuebraDeLinha(c)) {
+				} else if (c != '*') {
+				} else {
 
-					sinalizaErro(c,"*",n_line, n_column);
-				
+					sinalizaError(c, "*", n_line, n_column);
+
 				}
 
 				break;
@@ -227,7 +228,7 @@ public class Lexema {
 					err = 0;
 				} else if (c == '*') {
 					if (err == 0) {
-						sinalizaErro(c," / ",n_line, n_column);
+						sinalizaError(c, " / ", n_line, n_column);
 					}
 				} else {
 					if (c == '\n') {
@@ -236,7 +237,7 @@ public class Lexema {
 					}
 
 					if (err == 0) {
-						sinalizaErro(c,"/",n_line, n_column);
+						sinalizaError(c, "/", n_line, n_column);
 
 					} else if (lookahead == END_OF_FILE) {
 						return new Token(Tag.EOF, "EOF", n_line, n_column);
@@ -257,9 +258,7 @@ public class Lexema {
 					return new Token(Tag.RELOP_GT, ">", n_line, n_column);
 				}
 			case 9:
-				if (c == '\n') {
-					n_line++;
-					n_column = -1;
+				if (verificarQuebraDeLinha(c)) {
 					estado = 0;
 				}
 
@@ -306,7 +305,7 @@ public class Lexema {
 
 				if (!Character.isDigit(c)) {// Q15 e Q16
 					if (err == 0) {
-						sinalizaErro(c," NUMERO ",n_line, n_column);
+						sinalizaError(c, " Numerico ", n_line, n_column);
 
 					}
 					verificarQuebraDeLinha(c);
@@ -324,7 +323,7 @@ public class Lexema {
 				if (c == '"') {// Q20
 					if (err == 0) {
 
-						sinalizaErro(c,"ASCII",n_line, n_column);
+						sinalizaError(c, "ASCII", n_line, n_column);
 
 					} else {
 						lexema.append(c);
@@ -333,18 +332,17 @@ public class Lexema {
 						return new Token(Tag.Literal, lexema.toString().replace("\n\t", "").replace("\n", ""), n_line,
 								n_column);
 					}
-				}
-				else if (lookahead == END_OF_FILE) {
-					sinalizaErro('$'," "+'"'+" ",n_line, n_column);
+				} else if (lookahead == END_OF_FILE) {
+					sinalizaError('$', " " + '"' + " ", n_line, n_column);
 					return new Token(Tag.EOF, "EOF", n_line, n_column);
 
 				}
-				
+
 				else if (((int) c >= 0 || (int) c <= 250)) {
 					verificarQuebraDeLinha(c);
 					lexema.append(c);
 					err++;
-				}else {
+				} else {
 				}
 
 				break;
@@ -382,7 +380,7 @@ public class Lexema {
 				} else {
 					if (err == 0) {
 
-						sinalizaErro(c," - ",n_line, n_column);
+						sinalizaError(c, " - ", n_line, n_column);
 
 					} else {
 						if (lookahead == END_OF_FILE) {

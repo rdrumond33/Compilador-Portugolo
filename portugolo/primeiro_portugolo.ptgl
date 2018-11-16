@@ -1,13 +1,14 @@
 AlGoritmo 
 	declare
-	literal pp ;
-	pp <-- "asdsadsaDDDD";
-		escreva("sadas");
+	literal op , a;
+	NUmerico s;
+	s <-a- 5.5;
+		escreva("s + a");
 	leia(op);
-	se(op = G") inicio 
-		escreva("Oi, eu sou o Goku!");
+	se(op = a) inicio 
+		escreva(" Oi, eu sou o Goku! ");
 	fim 
-	
+
 	senao inicio 
 		escreva("Seu inseto, achei que iria preferir o Kakaroto");
 	fim

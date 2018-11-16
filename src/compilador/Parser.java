@@ -31,14 +31,21 @@ public class Parser {
 	}
 
 	public void erroSintatico(String m) {
-		if (contadorError <= 4) {
-			contadorError++;
-			System.out.print("[Erro Sintatico "+contadorError+" ] na linha " + token.getLinha() + " e coluna " + token.getColuna() + ": ");
-			System.out.println(m + "\n");
-		}else{
-			System.out.println(" Encontrado mais de 5 erros sintaticos o programa sera interropido gentiza rever o codigo digitado :)");
-			
+		if (this.contadorError <= 4) {
+			this.contadorError++;
+			System.err.println("[Erro Sintatico " + this.contadorError + " ] na linha " + token.getLinha() + " e coluna "
+					+ token.getColuna() + ": ");
+			System.err.println(m + "\n");
+		} else if (this.contadorError == 5) {
+			System.err.println(
+					" Encontrado mais de 5 erros sintaticos o programa sera interropido gentiza rever o codigo digitado :)");
+
 			lexema.fechaArquivo();
+			System.exit(0);
+
+		} else {
+			System.exit(0);
+
 		}
 	}
 
