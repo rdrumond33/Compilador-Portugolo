@@ -24,7 +24,7 @@ public class Ts {
 		word = new Token(Tag.KW_fim, "fim", 0, 0);
 		this.tabelaSimbolos.put("fim", word);
 
-		word = new Token(Tag.KW_subirotina, "subrotina", 0, 0);
+		word = new Token(Tag.KW_subrotina, "subrotina", 0, 0);
 		this.tabelaSimbolos.put("subrotina", word);
 
 		word = new Token(Tag.KW_retorne, "retorne", 0, 0);

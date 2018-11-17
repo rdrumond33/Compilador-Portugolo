@@ -20,9 +20,8 @@ public class Parser {
 		if (token.getClasse() == t) {
 			advance();
 			return true;
-		} else {
+		} else
 			return false;
-		}
 	}
 
 	public String mensager(String esperado, Token token) {
@@ -33,20 +32,16 @@ public class Parser {
 	public void erroSintatico(String m) {
 		if (this.contadorError <= 4) {
 			this.contadorError++;
-			System.err.println("[Erro Sintatico " + this.contadorError + " ] na linha " + token.getLinha() + " e coluna "
+			System.err.print("[Erro Sintatico " + this.contadorError + " ] na linha " + token.getLinha() + " e coluna "
 					+ token.getColuna() + ": ");
 			System.err.println(m + "\n");
 		} else if (this.contadorError == 5) {
 			System.err.println(
-					" Encontrado mais de 5 erros sintaticos o programa sera interropido gentiza rever o codigo digitado :)");
-
+					"Encontrado mais de 5 erros sintaticos o programa sera interropido gentileza rever o codigo digitado :)");
 			lexema.fechaArquivo();
 			System.exit(0);
-
-		} else {
+		} else
 			System.exit(0);
-
-		}
 	}
 
 	// mantem 'xxxx()' na pilha recursiva
@@ -56,9 +51,6 @@ public class Parser {
 	}
 
 	// synch: FOLLOW(xxxxxx): tira 'xxxxxx()' da pilha recursiva
-	public void synch() {
-
-	}
 
 	public void fechaArquivo() {
 		lexema.fechaArquivo();
@@ -72,7 +64,7 @@ public class Parser {
 	public void Compilador() {
 
 		if (token.getClasse() != Tag.KW_algoritmo) {
-			skip("Esperado \"algoritmo \", encontrado " + "\"" + token.getLexema() + "\"");
+			skip(mensager(" algoritimo ", token));
 		}
 		Programa();
 	}
@@ -84,15 +76,15 @@ public class Parser {
 		// token.getLexema());
 
 		if (!eat(Tag.KW_algoritmo))
-			skip("Esperado \"algoritimo\", encontrado " + "\"" + token.getLexema() + "\"");
+			skip(mensager(" algoritimo ", token));
 
 		RegexDeclVar();
 		ListaCmd();
 
 		if (!eat(Tag.KW_fim))
-			erroSintatico("Esperado \"fim\", encontrado " + "\"" + token.getLexema() + "\"");
+			erroSintatico(mensager(" fim ", token));
 		if (!eat(Tag.KW_algoritmo))
-			erroSintatico("Esperado \"algoritmo\", encontrado " + "\"" + token.getLexema() + "\"");
+			erroSintatico(mensager(" algoritmo ", token));
 
 		ListaRotina();
 
@@ -100,16 +92,12 @@ public class Parser {
 
 	// RegexDeclVar → “declare” Tipo ListaID";" DeclaraVar 3 | ε 4
 	public void RegexDeclVar() {
-		// System.out.println("teste RegexDeclVar->" + token.getClasse() + "== " +
-		// token.getLexema());
-
 		if (token.getClasse() == Tag.KW_declare) {
-			if (!eat(Tag.KW_declare))
-				erroSintatico("Esperado \"declare\", encontrado " + "\"" + token.getLexema() + "\"");
+			eat(Tag.KW_declare);
 			Tipo();
 			ListaID();
 			if (!eat(Tag.SMB_PontoVirgula))
-				erroSintatico("Esperado \" ; \", encontrado " + "\"" + token.getLexema() + "\"");
+				erroSintatico(mensager(" ; ", token));
 			DeclaraVar();
 		} else if (token.getClasse() == Tag.KW_algoritmo || token.getClasse() == Tag.ID
 				|| token.getClasse() == Tag.KW_retorne || token.getClasse() == Tag.KW_se
@@ -118,13 +106,11 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_leia) {
 
 			return;
-
 		}
 		// skip()
 		else {
 
-			skip("Esperado \" ; , declare ,fim, ID, retorn, logico , se , equanto , faça , para , repita , escreava , leia\", encontrado "
-					+ "\"" + token.getLexema() + "\"");
+			skip(mensager(" declare ", token));
 			if (token.getClasse() != Tag.EOF)
 				RegexDeclVar();
 		}
@@ -132,9 +118,6 @@ public class Parser {
 
 	// DeclaraVar → Tipo ListaID ";" DeclaraVar 5 | ε 6
 	public void DeclaraVar() {
-		// System.out.println("teste DeclaraVar->" + token.getClasse() + " == " +
-		// token.getLexema());
-
 		// 5
 		if (token.getClasse() == (Tag.Logico) || token.getClasse() == Tag.Numerico || token.getClasse() == (Tag.Literal)
 				|| token.getClasse() == Tag.Nulo) {
@@ -142,8 +125,7 @@ public class Parser {
 			ListaID();
 
 			if (!eat(Tag.SMB_PontoVirgula))
-				erroSintatico("Esperado \";\", encontrado " + "\"" + token.getLexema() + "\"");
-
+				erroSintatico(mensager(" ; ", token));
 			DeclaraVar();
 
 		}
@@ -156,7 +138,7 @@ public class Parser {
 			return;
 		} else {
 
-			skip("Esperado \";\", encontrado " + "\"" + token.getLexema() + "\"");
+			skip(mensager("  logico, numerico, literal, nulo ", token));
 			if (token.getClasse() != Tag.EOF)
 				DeclaraVar();
 		}
@@ -165,12 +147,12 @@ public class Parser {
 
 	// ListaRotina → ListaRotina’ 7
 	public void ListaRotina() {
-		if (token.getClasse() == Tag.KW_subirotina || token.getClasse() == Tag.EOF) {
+		if (token.getClasse() == Tag.KW_subrotina || token.getClasse() == Tag.EOF) {
 			ListaRotinaLinha();
 		}
 		// skip Teste
 		else {
-			skip("Esperado \" subrotina , EOF \", encontrado " + "\"" + token.getLexema() + "\"");
+			skip(mensager(" subrotina ", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaRotina();
 
@@ -180,16 +162,13 @@ public class Parser {
 
 	// ListaRotina’ → Rotina ListaRotina’ 8 | ε 9
 	public void ListaRotinaLinha() {
-		// System.out.println("teste ListaRotinaLinha->" + token.getClasse() + " == " +
-		// token.getLexema());
-
-		if (token.getClasse() == Tag.KW_subirotina) {
+		if (token.getClasse() == Tag.KW_subrotina) {
 			Rotina();
 			ListaRotinaLinha();
 		} else if (token.getClasse() == Tag.EOF) {
 			return;
 		} else {
-			skip("Esperado \" subrotina , EOF \", encontrado " + "\"" + token.getLexema() + "\"");
+			skip(mensager(" subrotina ", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaRotinaLinha();
 		}
@@ -200,37 +179,36 @@ public class Parser {
 	// "fim" "subrotina" 10
 	public void Rotina() {
 
-		if (token.getClasse() == Tag.KW_subirotina) {
-			eat(Tag.KW_subirotina);
+		if (token.getClasse() == Tag.KW_subrotina) {
+			eat(Tag.KW_subrotina);
 
 			if (!eat(Tag.ID))
-				erroSintatico("Esperado \"ID\", encontrado " + "\"" + token.getLexema() + "\"");
-
+				erroSintatico(mensager(" ID ", token));
 			if (!eat(Tag.SMB_OP))
-				erroSintatico("Esperado \"(\", encontrado " + "\"" + token.getLexema() + "\"");
+				erroSintatico(mensager(" ( ", token));
 			ListaParam();
 
 			if (!eat(Tag.SMB_CP))
-				erroSintatico("Esperado \")\", encontrado " + "\"" + token.getLexema() + "\"");
+				erroSintatico(mensager(" ) ", token));
 
 			RegexDeclVar();
 			ListaCmd();
 			Retorno();
 
 			if (!eat(Tag.KW_fim))
-				erroSintatico("Esperado \"fim\", encontrado " + "\"" + token.getLexema() + "\"");
-			if (!eat(Tag.KW_subirotina))
-				erroSintatico("Esperado \"subrotina\", encontrado " + "\"" + token.getLexema() + "\"");
+				erroSintatico(mensager(" fim ", token));
+			if (!eat(Tag.KW_subrotina))
+				erroSintatico(mensager(" subrotina ", token));
 
 		}
 		// Synch()
 		else if (token.getClasse() == Tag.EOF) {
-			erroSintatico("Esperado \"subrotina\", encontrado " + "\"" + token.getLexema() + "\"");
+			erroSintatico(mensager("subrotina ", token));
 			return;
 		}
 		// skip()
 		else {
-			skip("Esperado \"subrotina\", encontrado " + "\"" + token.getLexema() + "\"");
+			skip(mensager("subrotina ", token));
 			if (token.getClasse() != Tag.EOF)
 				Rotina();
 		}
@@ -249,7 +227,9 @@ public class Parser {
 		else if (token.getClasse() == Tag.SMB_CP) {
 			erroSintatico(mensager("subrotina", token));
 			return;
-		} else {
+		}
+		// skip
+		else {
 			skip(mensager("subrotina", token));
 			if (token.getClasse() != Tag.SMB_CP)
 				ListaParam();
@@ -386,6 +366,7 @@ public class Parser {
 			if (token.getClasse() == Tag.EOF)
 				ListaCmd();
 		}
+
 	}// fim listaCmd
 
 	// ListaCmd’ → Cmd ListaCmd’ 25 | ε 26

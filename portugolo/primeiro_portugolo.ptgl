@@ -2,10 +2,10 @@ AlGoritmo
 	declare
 	literal op , a;
 	NUmerico s;
-	s <-a- 5.5;
+	s <-- 5.5
 		escreva("s + a");
 	leia(op);
-	se(op = a) inicio 
+	se(op = a) inicio
 		escreva(" Oi, eu sou o Goku! ");
 	fim 
 
