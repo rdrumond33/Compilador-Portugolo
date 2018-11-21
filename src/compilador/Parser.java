@@ -24,7 +24,7 @@ public class Parser {
 			return false;
 	}
 
-	public String mensager(String esperado, Token token) {
+	public String MensagemDeErro(String esperado, Token token) {
 		return "Esperado \" " + esperado + "\", encontrado " + "\"" + token.getLexema() + "\"";
 
 	}
@@ -50,8 +50,6 @@ public class Parser {
 		advance();
 	}
 
-	// synch: FOLLOW(xxxxxx): tira 'xxxxxx()' da pilha recursiva
-
 	public void fechaArquivo() {
 		lexema.fechaArquivo();
 	}
@@ -64,7 +62,7 @@ public class Parser {
 	public void Compilador() {
 
 		if (token.getClasse() != Tag.KW_algoritmo) {
-			skip(mensager(" algoritimo ", token));
+			skip(MensagemDeErro(" algoritimo ", token));
 		}
 		Programa();
 	}
@@ -76,15 +74,15 @@ public class Parser {
 		// token.getLexema());
 
 		if (!eat(Tag.KW_algoritmo))
-			skip(mensager(" algoritimo ", token));
+			skip(MensagemDeErro(" algoritimo ", token));
 
 		RegexDeclVar();
 		ListaCmd();
 
 		if (!eat(Tag.KW_fim))
-			erroSintatico(mensager(" fim ", token));
+			erroSintatico(MensagemDeErro(" fim ", token));
 		if (!eat(Tag.KW_algoritmo))
-			erroSintatico(mensager(" algoritmo ", token));
+			erroSintatico(MensagemDeErro(" algoritmo ", token));
 
 		ListaRotina();
 
@@ -97,7 +95,7 @@ public class Parser {
 			Tipo();
 			ListaID();
 			if (!eat(Tag.SMB_PontoVirgula))
-				erroSintatico(mensager(" ; ", token));
+				erroSintatico(MensagemDeErro(" ; ", token));
 			DeclaraVar();
 		} else if (token.getClasse() == Tag.KW_algoritmo || token.getClasse() == Tag.ID
 				|| token.getClasse() == Tag.KW_retorne || token.getClasse() == Tag.KW_se
@@ -110,7 +108,7 @@ public class Parser {
 		// skip()
 		else {
 
-			skip(mensager(" declare ", token));
+			skip(MensagemDeErro(" declare ", token));
 			if (token.getClasse() != Tag.EOF)
 				RegexDeclVar();
 		}
@@ -125,7 +123,7 @@ public class Parser {
 			ListaID();
 
 			if (!eat(Tag.SMB_PontoVirgula))
-				erroSintatico(mensager(" ; ", token));
+				erroSintatico(MensagemDeErro(" ; ", token));
 			DeclaraVar();
 
 		}
@@ -138,7 +136,7 @@ public class Parser {
 			return;
 		} else {
 
-			skip(mensager("  logico, numerico, literal, nulo ", token));
+			skip(MensagemDeErro("  logico, numerico, literal, nulo ", token));
 			if (token.getClasse() != Tag.EOF)
 				DeclaraVar();
 		}
@@ -152,7 +150,7 @@ public class Parser {
 		}
 		// skip Teste
 		else {
-			skip(mensager(" subrotina ", token));
+			skip(MensagemDeErro(" subrotina ", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaRotina();
 
@@ -168,7 +166,7 @@ public class Parser {
 		} else if (token.getClasse() == Tag.EOF) {
 			return;
 		} else {
-			skip(mensager(" subrotina ", token));
+			skip(MensagemDeErro(" subrotina ", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaRotinaLinha();
 		}
@@ -183,32 +181,32 @@ public class Parser {
 			eat(Tag.KW_subrotina);
 
 			if (!eat(Tag.ID))
-				erroSintatico(mensager(" ID ", token));
+				erroSintatico(MensagemDeErro(" ID ", token));
 			if (!eat(Tag.SMB_OP))
-				erroSintatico(mensager(" ( ", token));
+				erroSintatico(MensagemDeErro(" ( ", token));
 			ListaParam();
 
 			if (!eat(Tag.SMB_CP))
-				erroSintatico(mensager(" ) ", token));
+				erroSintatico(MensagemDeErro(" ) ", token));
 
 			RegexDeclVar();
 			ListaCmd();
 			Retorno();
 
 			if (!eat(Tag.KW_fim))
-				erroSintatico(mensager(" fim ", token));
+				erroSintatico(MensagemDeErro(" fim ", token));
 			if (!eat(Tag.KW_subrotina))
-				erroSintatico(mensager(" subrotina ", token));
+				erroSintatico(MensagemDeErro(" subrotina ", token));
 
 		}
 		// Synch()
 		else if (token.getClasse() == Tag.EOF) {
-			erroSintatico(mensager("subrotina ", token));
+			erroSintatico(MensagemDeErro("subrotina ", token));
 			return;
 		}
 		// skip()
 		else {
-			skip(mensager("subrotina ", token));
+			skip(MensagemDeErro("subrotina ", token));
 			if (token.getClasse() != Tag.EOF)
 				Rotina();
 		}
@@ -225,12 +223,12 @@ public class Parser {
 		}
 		// sych
 		else if (token.getClasse() == Tag.SMB_CP) {
-			erroSintatico(mensager("subrotina", token));
+			erroSintatico(MensagemDeErro("subrotina", token));
 			return;
 		}
 		// skip
 		else {
-			skip(mensager("subrotina", token));
+			skip(MensagemDeErro("subrotina", token));
 			if (token.getClasse() != Tag.SMB_CP)
 				ListaParam();
 		}
@@ -245,7 +243,7 @@ public class Parser {
 		} else if (token.getClasse() == Tag.SMB_CP) {
 			return;
 		} else {
-			skip(mensager(";", token));
+			skip(MensagemDeErro(";", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaParamLinha();
 		}
@@ -258,10 +256,10 @@ public class Parser {
 			ListaID();
 			Tipo();
 		} else if (token.getClasse() == Tag.SMB_SEMICOLON || token.getClasse() == Tag.SMB_CP) {
-			erroSintatico(mensager(" ID ", token));
+			erroSintatico(MensagemDeErro(" ID ", token));
 			return;
 		} else {
-			skip(mensager(" ID ", token));
+			skip(MensagemDeErro(" ID ", token));
 			if (token.getClasse() != Tag.EOF)
 				Param();
 		}
@@ -278,10 +276,10 @@ public class Parser {
 		else if (token.getClasse() == Tag.SMB_PontoVirgula || token.getClasse() == Tag.Logico
 				|| token.getClasse() == Tag.Numerico || token.getClasse() == Tag.Literal
 				|| token.getClasse() == Tag.Nulo) {
-			erroSintatico(mensager(" ID ", token));
+			erroSintatico(MensagemDeErro(" ID ", token));
 			return;
 		} else {
-			skip(mensager(" ID ", token));
+			skip(MensagemDeErro(" ID ", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaID();
 		}
@@ -298,7 +296,7 @@ public class Parser {
 				|| token.getClasse() == Tag.Nulo) {
 			return;
 		} else {
-			skip(mensager(" , ", token));
+			skip(MensagemDeErro(" , ", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaIDLinha();
 		}
@@ -315,7 +313,7 @@ public class Parser {
 		else if (token.getClasse() == Tag.KW_fim) {
 			return;
 		} else {
-			skip(mensager(" retorne ", token));
+			skip(MensagemDeErro(" retorne ", token));
 			if (token.getClasse() != Tag.EOF)
 				Retorno();
 		}
@@ -340,11 +338,11 @@ public class Parser {
 			eat(Tag.Nulo);
 		} else if (token.getClasse() == Tag.ID || token.getClasse() == Tag.SMB_SEMICOLON
 				|| token.getClasse() == Tag.SMB_CP) {
-			erroSintatico(mensager(" logico, numerico, literal, nulo ", token));
+			erroSintatico(MensagemDeErro(" logico, numerico, literal, nulo ", token));
 			return;
 		} else {
 
-			skip(mensager("logico, numerico, literal, nulo ", token));
+			skip(MensagemDeErro("logico, numerico, literal, nulo ", token));
 			if (token.getClasse() != Tag.EOF)
 				Tipo();
 		}
@@ -362,7 +360,7 @@ public class Parser {
 			ListaCmdLinha();
 		} else {
 
-			skip(mensager(" se, enquanto, para, repita, id, escreva, leia ", token));
+			skip(MensagemDeErro(" se, enquanto, para, repita, id, escreva, leia ", token));
 			if (token.getClasse() == Tag.EOF)
 				ListaCmd();
 		}
@@ -385,7 +383,7 @@ public class Parser {
 
 		} else {
 
-			skip(mensager(" se, enquanto, para, repita, id, escreva, leia ", token));
+			skip(MensagemDeErro(" se, enquanto, para, repita, id, escreva, leia ", token));
 			if (token.getClasse() != Tag.EOF)
 				ListaCmdLinha();
 		}
@@ -428,10 +426,10 @@ public class Parser {
 		else if (token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate) {
 
-			erroSintatico(mensager(" se, enquanto, para, repita, id, escreva, leia ", token));
+			erroSintatico(MensagemDeErro(" se, enquanto, para, repita, id, escreva, leia ", token));
 			return;
 		} else {
-			skip(mensager(" se, enquanto, para, repita, id, escreva, leia ", token));
+			skip(MensagemDeErro(" se, enquanto, para, repita, id, escreva, leia ", token));
 			if (token.getClasse() != Tag.EOF)
 				Cmd();
 		}
@@ -452,9 +450,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate) {
-			erroSintatico(mensager("<--, (", token));
+			erroSintatico(MensagemDeErro("<--, (", token));
 		} else {
-			skip(mensager(" <--, ( ", token));
+			skip(MensagemDeErro(" <--, ( ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdLinha();
 
@@ -493,10 +491,10 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate) {
-			erroSintatico(mensager(" se ", token));
+			erroSintatico(MensagemDeErro(" se ", token));
 		} else {
 
-			skip(mensager(" se ", token));
+			skip(MensagemDeErro(" se ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdSe();
 
@@ -528,7 +526,7 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_leia) {
 			return;
 		} else {
-			skip(mensager(" senao ", token));
+			skip(MensagemDeErro(" senao ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdSeLinha();
 		}
@@ -566,9 +564,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate) {
-			erroSintatico(mensager(" enquanto ", token));
+			erroSintatico(MensagemDeErro(" enquanto ", token));
 		} else {
-			skip(mensager(" enquanto ", token));
+			skip(MensagemDeErro(" enquanto ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdEnquanto();
 
@@ -611,9 +609,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate) {
-			erroSintatico(mensager(" para ", token));
+			erroSintatico(MensagemDeErro(" para ", token));
 		} else {
-			skip(mensager(" para ", token));
+			skip(MensagemDeErro(" para ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdPara();
 
@@ -639,9 +637,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate) {
-			erroSintatico(mensager(" repita ", token));
+			erroSintatico(MensagemDeErro(" repita ", token));
 		} else {
-			skip(mensager(" repita ", token));
+			skip(MensagemDeErro(" repita ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdRepita();
 
@@ -665,9 +663,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate || token.getClasse() == Tag.KW_repita) {
-			erroSintatico(mensager(" <--  ", token));
+			erroSintatico(MensagemDeErro(" <--  ", token));
 		} else {
-			skip(mensager(" <--  ", token));
+			skip(MensagemDeErro(" <--  ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdAtrib();
 
@@ -692,9 +690,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate || token.getClasse() == Tag.KW_repita) {
-			erroSintatico(mensager(" (  ", token));
+			erroSintatico(MensagemDeErro(" (  ", token));
 		} else {
-			skip(mensager(" (  ", token));
+			skip(MensagemDeErro(" (  ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdChamaRotina();
 
@@ -714,7 +712,7 @@ public class Parser {
 		else if (token.getClasse() == Tag.SMB_CP)
 			return;
 		else {
-			skip(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (   ", token));
+			skip(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (   ", token));
 			if (token.getClasse() != Tag.EOF)
 				RegexExp();
 
@@ -730,7 +728,7 @@ public class Parser {
 		} else if (token.getClasse() == Tag.SMB_CP)
 			return;
 		else {
-			skip(mensager(" , ", token));
+			skip(MensagemDeErro(" , ", token));
 			if (token.getClasse() != Tag.EOF)
 				RegexExpLinha();
 
@@ -758,9 +756,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_para || token.getClasse() == Tag.ID || token.getClasse() == Tag.KW_leia
 				|| token.getClasse() == Tag.KW_fim || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate || token.getClasse() == Tag.KW_repita) {
-			erroSintatico(mensager(" escreva  ", token));
+			erroSintatico(MensagemDeErro(" escreva  ", token));
 		} else {
-			skip(mensager(" escreva  ", token));
+			skip(MensagemDeErro(" escreva  ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdEscreva();
 
@@ -792,9 +790,9 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_fim
 				|| token.getClasse() == Tag.KW_retorne || token.getClasse() == Tag.KW_ate
 				|| token.getClasse() == Tag.KW_repita) {
-			erroSintatico(mensager(" leia  ", token));
+			erroSintatico(MensagemDeErro(" leia  ", token));
 		} else {
-			skip(mensager(" leia  ", token));
+			skip(MensagemDeErro(" leia  ", token));
 			if (token.getClasse() != Tag.EOF)
 				CmdLeia();
 
@@ -815,10 +813,10 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_leia || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate || token.getClasse() == Tag.SMB_PontoVirgula
 				|| token.getClasse() == Tag.SMB_SEMICOLON) {
-			erroSintatico(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
+			erroSintatico(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
 			return;
 		} else {
-			skip(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
+			skip(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
 			if (token.getClasse() != Tag.EOF)
 				Expressao();
 		}
@@ -871,7 +869,7 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_escreva || token.getClasse() == Tag.KW_leia) {
 			return;
 		} else {
-			skip(mensager(" <, <=, >, >=, =, <> ", token));
+			skip(MensagemDeErro(" <, <=, >, >=, =, <> ", token));
 			if (token.getClasse() != Tag.EOF)
 				ExpLinha();
 		}
@@ -894,10 +892,10 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_leia || token.getClasse() == Tag.KW_retorne
 				|| token.getClasse() == Tag.KW_ate || token.getClasse() == Tag.SMB_PontoVirgula
 				|| token.getClasse() == Tag.SMB_SEMICOLON) {
-			erroSintatico(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
+			erroSintatico(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
 			return;
 		} else {
-			skip(mensager("id, Numerico, Literal, verdadeiro, falso, Nao, (   ", token));
+			skip(MensagemDeErro("id, Numerico, Literal, verdadeiro, falso, Nao, (   ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp1();
 		}
@@ -930,7 +928,7 @@ public class Parser {
 				|| token.getClasse() == Tag.RELOP_EQ || token.getClasse() == Tag.RELOP_LT_GT) {
 			return;
 		} else {
-			skip(mensager(" E, Ou ", token));
+			skip(MensagemDeErro(" E, Ou ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp1Linha();
 		}
@@ -957,10 +955,10 @@ public class Parser {
 				|| token.getClasse() == Tag.RELOP_GE || token.getClasse() == Tag.RELOP_EQ
 				|| token.getClasse() == Tag.RELOP_LT_GT) {
 
-			erroSintatico(mensager("id, Numerico, Literal, verdadeiro, falso, Nao, ( ", token));
+			erroSintatico(MensagemDeErro("id, Numerico, Literal, verdadeiro, falso, Nao, ( ", token));
 			return;
 		} else {
-			skip(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
+			skip(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp2();
 		}
@@ -991,7 +989,7 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_e || token.getClasse() == Tag.KW_ou) {
 			return;
 		} else {
-			skip(mensager(" +, - ", token));
+			skip(MensagemDeErro(" +, - ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp2Linha();
 		}
@@ -1016,10 +1014,10 @@ public class Parser {
 				|| token.getClasse() == Tag.RELOP_GT || token.getClasse() == Tag.RELOP_GE
 				|| token.getClasse() == Tag.RELOP_EQ || token.getClasse() == Tag.RELOP_LT_GT
 				|| token.getClasse() == Tag.KW_e || token.getClasse() == Tag.KW_ou) {
-			erroSintatico(mensager("id, Numerico, Literal, verdadeiro, falso, Nao, ( ", token));
+			erroSintatico(MensagemDeErro("id, Numerico, Literal, verdadeiro, falso, Nao, ( ", token));
 			return;
 		} else {
-			skip(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
+			skip(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp3();
 		}
@@ -1049,7 +1047,7 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_e || token.getClasse() == Tag.KW_ou) {
 			return;
 		} else {
-			skip(mensager(" *, / ", token));
+			skip(MensagemDeErro(" * , / ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp3Linha();
 		}
@@ -1102,10 +1100,10 @@ public class Parser {
 				|| token.getClasse() == Tag.RELOP_EQ || token.getClasse() == Tag.RELOP_PLUS
 				|| token.getClasse() == Tag.RELOP_MINUS || token.getClasse() == Tag.RELOP_DIV
 				|| token.getClasse() == Tag.RELOP_MULT) {
-			erroSintatico(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
+			erroSintatico(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
 			return;
 		} else {
-			skip(mensager(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
+			skip(MensagemDeErro(" id, Numerico, Literal, verdadeiro, falso, Nao, (  ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp4();
 		}
@@ -1140,7 +1138,7 @@ public class Parser {
 				|| token.getClasse() == Tag.RELOP_MULT) {
 			return;
 		} else {
-			skip(mensager(" (  ", token));
+			skip(MensagemDeErro(" (  ", token));
 			if (token.getClasse() != Tag.EOF)
 				Exp4Linha();
 		}
@@ -1155,10 +1153,10 @@ public class Parser {
 				|| token.getClasse() == Tag.KW_verdadeiro || token.getClasse() == Tag.KW_falso
 				|| token.getClasse() == Tag.SMB_OP) {
 
-			erroSintatico(mensager("nao", token));
+			erroSintatico(MensagemDeErro("nao", token));
 			return;
 		} else {
-			skip(mensager(" nao  ", token));
+			skip(MensagemDeErro(" nao  ", token));
 			if (token.getClasse() != Tag.EOF)
 				OpUnario();
 		}

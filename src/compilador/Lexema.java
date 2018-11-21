@@ -10,7 +10,7 @@ public class Lexema {
 	public static int n_column = 1; // contador de colunas
 	private RandomAccessFile instance_file; // referencia para o arquivo
 	private static Ts tabelaSimbolos; // tabela de simbolos
-	static int err = 0,ContadorError = 0;
+	static int err = 0, contadorerror = 0;
 
 	/**
 	 * Função Lexema abre o arquivo
@@ -51,9 +51,9 @@ public class Lexema {
 	 * 
 	 */
 	public void sinalizaError(char c, String esperado, int n_line, int n_colum) {
-		this.ContadorError+=++err;
-		System.err.println("[Erro lexico "+this.ContadorError+"]: Simbolo encontrado: " + c + " na linha: " + n_line + " e na coluna: "
-				+ n_column + " Simbolo esperado : " + esperado + "\n");
+		this.contadorerror += ++err;
+		System.err.println("[Erro lexico " + this.contadorerror + "]: Simbolo encontrado: " + c + " na linha: " + n_line
+				+ " e na coluna: " + n_column + " Simbolo esperado : " + esperado + "\n");
 		verificarQuebraDeLinha(c);
 
 	}
@@ -138,8 +138,8 @@ public class Lexema {
 					return new Token(Tag.EOF, "EOF", n_line, n_column);
 				} else if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
 					// Permance no estado = 0
-					if(verificarQuebraDeLinha(c)) {
-						
+					if (verificarQuebraDeLinha(c)) {
+
 					}
 					// Reconhece o Tabulacao com 3 de espaco
 					else if (c == '\t')
