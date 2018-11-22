@@ -5,8 +5,8 @@ AlGoritmo
 	s <-- 5.5;
 		escreva("s + a");
 	leia(op);
-	se(op = a) inicio
-		escreva(" Oi, eu sou o Goku! ");
+	se(op=os) inicio
+		escreva("Oi, eu sou o Goku! );
 	fim 
 
 	senao inicio 
